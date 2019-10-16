@@ -1,16 +1,13 @@
 package com.FingerTechWeb.FingertechAPIWeb.Utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-
+import com.FingerTechWeb.FingertechAPIWeb.Models.Digital;
 import com.nitgen.SDK.BSP.NBioBSPJNI;
-import com.nitgen.SDK.BSP.NBioBSPJNI.FIR_PAYLOAD;
-import com.nitgen.SDK.BSP.NBioBSPJNI.FIR_TEXTENCODE;
-import com.nitgen.SDK.BSP.NBioBSPJNI.INPUT_FIR;
-import com.nitgen.SDK.BSP.NBioBSPJNI.IndexSearch;
-import com.nitgen.SDK.BSP.NBioBSPJNI.IndexSearch.FP_INFO;
-import com.nitgen.SDK.BSP.NBioBSPJNI.IndexSearch.SAMPLE_INFO;
+import com.nitgen.SDK.BSP.NBioBSPJNI.FIR_HANDLE;
+
+import ft_enro.view.Enroll;
+
 
 public class UtilsNitgen {
 	NBioBSPJNI bsp;
@@ -27,41 +24,76 @@ public class UtilsNitgen {
 		
 		
 	}
-
 	
-	//Verifica digital com 1 para N
-	public HashMap check1toN(ArrayList<Digital> ad, Digital d){		
+	
+	public String Captura() {
 		
-		NBioBSPJNI.IndexSearch.SAMPLE_INFO sampleInfo = IndexSearchEngine.new SAMPLE_INFO();
-		NBioBSPJNI.IndexSearch.FP_INFO fpInfo = IndexSearchEngine.new FP_INFO();
-		HashMap<Object, Object> map = new HashMap<>();	
-			
-		ad.forEach(t -> {	
-			IndexSearchEngine.AddFIR(stringToInputFIR(t.getPrimeiradigital()), t.getId(), sampleInfo);			
-		});		
-		
-		IndexSearchEngine.Identify(stringToInputFIR(d.getPrimeiradigital()), 5, fpInfo, 5);		
-		if (CheckError())  {
-            if (bsp.GetErrorCode() == NBioBSPJNI.ERROR.NBioAPIERROR_INDEXSEARCH_IDENTIFY_FAIL)  {
-              map.put("error", "Usuário não idêntificado");
-              //System.err.println("usuario não encontrado");
-              return map;              
-            }
-            else if (bsp.GetErrorCode() == NBioBSPJNI.ERROR.NBioAPIERROR_INDEXSEARCH_IDENTIFY_STOP)  {
-            	map.put("error", "tempo limite ultrapassdo");  
-            	 return map;
-            }        
-		}		
-		d.setId(fpInfo.ID);		
-		//map.put("Digital", d);
-		map.put("Sucesso", d.getId());
-		map.put("Usuario", d);
-		//System.err.println("User ID "+d.getId());     
-		
-		return map;	
+		bsp.OpenDevice();		
+		NBioBSPJNI.FIR_HANDLE captura = bsp.new FIR_HANDLE();	
+		bsp.Capture(captura);	
+		bsp.CloseDevice();
+		return  handleparaString(captura);
 		
 	}
+	
+	public boolean idenficacao(String digital) {
 		
+		bsp.OpenDevice();
+		Boolean resultado = new Boolean(false);
+		
+		bsp.Verify(stringToInputFIR(digital), resultado, null);
+		
+		return resultado;
+		
+	}
+
+	
+	public String enrollDigital() {
+		
+		Enroll enroll = new Enroll();
+		enroll.EnrolInit();
+		
+		return "ok";
+		
+		
+		
+		
+	}
+	
+// 	não necessário
+//	//Verifica digital com 1 para N
+//	public HashMap check1toN(ArrayList<Digital> ad, Digital d){		
+//		
+//		NBioBSPJNI.IndexSearch.SAMPLE_INFO sampleInfo = IndexSearchEngine.new SAMPLE_INFO();
+//		NBioBSPJNI.IndexSearch.FP_INFO fpInfo = IndexSearchEngine.new FP_INFO();
+//		HashMap<Object, Object> map = new HashMap<>();	
+//			
+//		ad.forEach(t -> {	
+//			IndexSearchEngine.AddFIR(stringToInputFIR(t.getDigitalp()), t.getId(), sampleInfo);			
+//		});		
+//		
+//		IndexSearchEngine.Identify(stringToInputFIR(d.getPrimeiradigital()), 5, fpInfo, 5);		
+//		if (CheckError())  {
+//            if (bsp.GetErrorCode() == NBioBSPJNI.ERROR.NBioAPIERROR_INDEXSEARCH_IDENTIFY_FAIL)  {
+//              map.put("error", "Usuário não idêntificado");
+//              //System.err.println("usuario não encontrado");
+//              return map;              
+//            }
+//            else if (bsp.GetErrorCode() == NBioBSPJNI.ERROR.NBioAPIERROR_INDEXSEARCH_IDENTIFY_STOP)  {
+//            	map.put("error", "tempo limite ultrapassdo");  
+//            	 return map;
+//            }        
+//		}		
+//		d.setId(fpInfo.ID);		
+//		//map.put("Digital", d);
+//		map.put("Sucesso", d.getId());
+//		map.put("Usuario", d);
+//		//System.err.println("User ID "+d.getId());     
+//		
+//		return map;	
+//		
+//	}
+//		
 
 	
 	
@@ -73,13 +105,25 @@ public class UtilsNitgen {
 		textSavedFIRA = bsp.new FIR_TEXTENCODE();
 		textSavedFIRA.TextFIR = digital;
 		NBioBSPJNI.INPUT_FIR inputFIR = bsp.new INPUT_FIR();
-		inputFIR.SetTextFIR(textSavedFIRA);	
-		
+		inputFIR.SetTextFIR(textSavedFIRA);			
 		return inputFIR;
+		
+	}
+	
+	
+	//Handle para String
+	public String handleparaString(NBioBSPJNI.FIR_HANDLE digital) {
+		
+		NBioBSPJNI.FIR_TEXTENCODE textSavedFIRA = bsp.new FIR_TEXTENCODE();		
+		bsp.GetTextFIRFromHandle(digital, textSavedFIRA);	
+		
+		
+		return textSavedFIRA.TextFIR;
 		
 		
 		
 	}
+	
 	
 	public boolean check1to1(Digital fp, Digital fp2){		
 
@@ -87,10 +131,10 @@ public class UtilsNitgen {
 		NBioBSPJNI.FIR_TEXTENCODE textSavedFIRA2;
 		
         textSavedFIRA = bsp.new FIR_TEXTENCODE();
-        textSavedFIRA.TextFIR = fp.getPrimeiradigital(); 
+        textSavedFIRA.TextFIR = fp.getDigitalp(); 
         
         textSavedFIRA2 = bsp.new FIR_TEXTENCODE();
-        textSavedFIRA2.TextFIR = fp2.getSegundadigital();	
+        textSavedFIRA2.TextFIR = fp2.getDigitals();	
         
 		NBioBSPJNI.INPUT_FIR inputFIR = bsp.new INPUT_FIR();
 		NBioBSPJNI.INPUT_FIR inputFIR2 = bsp.new INPUT_FIR();
@@ -102,8 +146,8 @@ public class UtilsNitgen {
 		
 		bsp.VerifyMatch(inputFIR, inputFIR2, bResult, payload);
 		
-		//System.out.println(bResult);
-		return true;
+		
+		return bResult;
 		
 	}
 	

@@ -1,30 +1,46 @@
 package com.FingerTechWeb.FingertechAPIWeb.Controllers;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.FingerTechWeb.FingertechAPIWeb.Utils.UtilsNitgen;
 import com.nitgen.SDK.BSP.NBioBSPJNI;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/api/public/v1")
 public class CaptureController {
 	NBioBSPJNI bsp;
+	UtilsNitgen ut = new UtilsNitgen();
 	
 	
 	
-	
-	@RequestMapping(value= "/capturesingle/", method = RequestMethod.GET)
-	public boolean captureSingleFinger() {
+	@CrossOrigin
+	@RequestMapping(value= "/captura/Capturar/1", method = RequestMethod.GET)
+	public String captureSingleFinger() {
 		
-		bsp = new NBioBSPJNI();
-		bsp.OpenDevice();		
-		NBioBSPJNI.FIR_HANDLE captura = bsp.new FIR_HANDLE();	
-		bsp.Capture(captura);		
-		return true;
+		String retorno = ut.Captura();		
+		return retorno;	
 		
 	}
 	
+	@RequestMapping(value= "/captura/Comparar", method = RequestMethod.GET)
+	public String compareFingerPrint(@RequestParam("Digital") String digital) {	
+				
+		return digital;
+		
+	}
+	
+	@RequestMapping(value= "/captura/Enroll/1", method = RequestMethod.GET)
+	public String enrollDigital() {	
+		
+				
+		
+		return ut.enrollDigital();
+		
+	}
 	
 	
 
