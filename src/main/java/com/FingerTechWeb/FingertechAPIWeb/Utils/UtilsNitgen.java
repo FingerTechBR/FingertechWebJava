@@ -6,6 +6,8 @@ import com.FingerTechWeb.FingertechAPIWeb.Models.Digital;
 import com.nitgen.SDK.BSP.NBioBSPJNI;
 import com.nitgen.SDK.BSP.NBioBSPJNI.FIR_HANDLE;
 
+import ft_enro.view.Enroll;
+
 
 public class UtilsNitgen {
 	NBioBSPJNI bsp;
@@ -29,10 +31,34 @@ public class UtilsNitgen {
 		bsp.OpenDevice();		
 		NBioBSPJNI.FIR_HANDLE captura = bsp.new FIR_HANDLE();	
 		bsp.Capture(captura);	
+		bsp.CloseDevice();
 		return  handleparaString(captura);
 		
 	}
+	
+	public boolean idenficacao(String digital) {
+		
+		bsp.OpenDevice();
+		Boolean resultado = new Boolean(false);
+		
+		bsp.Verify(stringToInputFIR(digital), resultado, null);
+		
+		return resultado;
+		
+	}
 
+	
+	public String enrollDigital() {
+		
+		Enroll enroll = new Enroll();
+		enroll.EnrolInit();
+		
+		return "ok";
+		
+		
+		
+		
+	}
 	
 // 	não necessário
 //	//Verifica digital com 1 para N
