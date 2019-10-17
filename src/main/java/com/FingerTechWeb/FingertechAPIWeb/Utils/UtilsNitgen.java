@@ -51,9 +51,9 @@ public class UtilsNitgen {
 	public String enrollDigital() {
 		
 		Enroll enroll = new Enroll();
-		enroll.EnrolInit();
 		
-		return "ok";
+		
+		return handleparaString(enroll.EnrolInit());
 		
 		
 		
@@ -119,6 +119,18 @@ public class UtilsNitgen {
 		
 		
 		return textSavedFIRA.TextFIR;
+		
+		
+		
+	}
+	
+	public boolean identify(String digital) {
+		
+		
+		bsp.OpenDevice();
+		Boolean resultado = new Boolean(false);		
+		bsp.Verify(stringToInputFIR(digital), resultado, null);
+		return resultado;
 		
 		
 		
