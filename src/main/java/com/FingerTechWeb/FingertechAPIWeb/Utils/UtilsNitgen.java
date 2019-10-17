@@ -132,8 +132,6 @@ public class UtilsNitgen {
 		bsp.Verify(stringToInputFIR(digital), resultado, null);
 		return resultado;
 		
-		
-		
 	}
 	
 	
@@ -163,17 +161,7 @@ public class UtilsNitgen {
 		
 	}
 	
-	
-	//convert não implantada ainda fix me
-	public com.nitgen.SDK.BSP.NBioBSPJNI.INPUT_FIR INPUT_FIR (String fp1, String fp2) {
-		
-		NBioBSPJNI.INPUT_FIR ip;
-		ip =  bsp.new INPUT_FIR();		
-		
-		return ip;
-		
-	}
-	
+
 	
 	   private Boolean CheckError()    {
 	        if (bsp.IsErrorOccured())  {	           

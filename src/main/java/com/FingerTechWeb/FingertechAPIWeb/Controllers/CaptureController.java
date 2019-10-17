@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.FingerTechWeb.FingertechAPIWeb.Utils.UtilsNitgen;
 import com.nitgen.SDK.BSP.NBioBSPJNI;
 
-import ch.qos.logback.classic.Logger;
 
 @RestController
 @RequestMapping("/api/public/v1")
@@ -21,8 +20,7 @@ public class CaptureController {
 	
 	@CrossOrigin
 	@RequestMapping(value= "/captura/Capturar/1", method = RequestMethod.GET)
-	public String captureSingleFinger() {
-		
+	public String captureSingleFinger() {		
 		String retorno = ut.Captura();		
 		return retorno;	
 		
@@ -31,7 +29,6 @@ public class CaptureController {
 	@CrossOrigin
 	@RequestMapping(value= "/captura/Comparar", method = RequestMethod.GET)
 	public boolean compareFingerPrint(@RequestParam("Digital") String digital) {	
-		
 						
 		return ut.identify(digital);
 		
@@ -40,7 +37,6 @@ public class CaptureController {
 	@CrossOrigin
 	@RequestMapping(value= "/captura/Enroll/1", method = RequestMethod.GET)
 	public String enrollDigital() {	
-		
 				
 		
 		return ut.enrollDigital();
