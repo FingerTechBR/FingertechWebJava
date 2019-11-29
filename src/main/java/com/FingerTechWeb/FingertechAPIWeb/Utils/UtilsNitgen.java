@@ -16,7 +16,7 @@ public class UtilsNitgen {
 	
 	public  UtilsNitgen(){
 		
-		NBioBSPJNI bsp;
+	
 		 bsp = new NBioBSPJNI();
 	     IndexSearchEngine = bsp.new IndexSearch();		 
 		 this.bsp = bsp;
@@ -48,10 +48,8 @@ public class UtilsNitgen {
 	}
 
 	
-	public String enrollDigital() {
-		
-		Enroll enroll = new Enroll();
-		
+	public String enrollDigital() {		
+		Enroll enroll = new Enroll();	
 		
 		return handleparaString(enroll.EnrolInit());
 		
@@ -130,6 +128,7 @@ public class UtilsNitgen {
 		bsp.OpenDevice();
 		Boolean resultado = new Boolean(false);		
 		bsp.Verify(stringToInputFIR(digital), resultado, null);
+		bsp.CloseDevice();
 		return resultado;
 		
 	}
